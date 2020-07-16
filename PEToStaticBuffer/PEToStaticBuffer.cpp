@@ -1,20 +1,39 @@
-// PEToStaticBuffer.cpp : Diese Datei enthält die Funktion "main". Hier beginnt und endet die Ausführung des Programms.
-//
-
+// PE to static buffer
 #include <iostream>
+#include <fstream>
+#include <ctime>
 
-int main()
-{
-    std::cout << "Hello World!\n";
+int main(int argC, char * argV[]) {
+	if (argC < 2) {
+		std::cout << "Usage: PEToStaticBuffer [path-to-portable-executeable]" << std::endl;
+		return 1;
+	}
+
+	std::ifstream pEFile;
+	pEFile.open(argV[1]);
+	if (pEFile) {
+		pEFile.seekg(0, pEFile.end);
+		int pEBytes = (int)pEFile.tellg();
+		pEFile.seekg(0, pEFile.beg);
+
+		char * pEBuffer = new char[pEBytes];
+		pEFile.read(pEBuffer, pEBytes);
+
+		std::time_t timeStamp = std::time(NULL);
+
+		#pragma warning (disable: 4996)
+		std::cout << "//PEStaticBuffer of \"" << argV[1] << "\"\n//Generated on " << std::asctime(std::localtime(&timeStamp)) << std::endl;
+		std::cout << "#pragma once" << std::endl << std::endl;
+
+		std::cout << "STATIC UINT8 PE_BUFFER[] = {" << std::endl;
+
+		for (int i = 0; i < (pEBytes - 1); i++) {
+			std::cout << "0x" << std::hex << (int)(uint8_t)pEBuffer[i] << ", ";
+		}
+		std::cout << "0x" << std::hex << (int)(uint8_t)pEBuffer[pEBytes - 1] << std::endl;
+
+		std::cout << "};" << std::endl;
+	}
+
+	return 0;
 }
-
-// Programm ausführen: STRG+F5 oder "Debuggen" > Menü "Ohne Debuggen starten"
-// Programm debuggen: F5 oder "Debuggen" > Menü "Debuggen starten"
-
-// Tipps für den Einstieg: 
-//   1. Verwenden Sie das Projektmappen-Explorer-Fenster zum Hinzufügen/Verwalten von Dateien.
-//   2. Verwenden Sie das Team Explorer-Fenster zum Herstellen einer Verbindung mit der Quellcodeverwaltung.
-//   3. Verwenden Sie das Ausgabefenster, um die Buildausgabe und andere Nachrichten anzuzeigen.
-//   4. Verwenden Sie das Fenster "Fehlerliste", um Fehler anzuzeigen.
-//   5. Wechseln Sie zu "Projekt" > "Neues Element hinzufügen", um neue Codedateien zu erstellen, bzw. zu "Projekt" > "Vorhandenes Element hinzufügen", um dem Projekt vorhandene Codedateien hinzuzufügen.
-//   6. Um dieses Projekt später erneut zu öffnen, wechseln Sie zu "Datei" > "Öffnen" > "Projekt", und wählen Sie die SLN-Datei aus.
