@@ -28,7 +28,7 @@ int main(int argC, char * argV[]) {
 		std::cout << "//PEStaticBuffer of \"" << argV[1] << "\"\n//Generated on " << std::asctime(std::localtime(&timeStamp)) << std::endl;
 		std::cout << "#pragma once" << std::endl << std::endl;
 
-		std::cout << "STATIC UINT8 PE_BUFFER[] = {" << std::endl;
+		std::cout << "static char PE_BUFFER[] = {" << std::endl;
 
 		for (int i = 0; i < (pEBytes - 1); i++) {
 			std::cout << "0x" << std::setfill('0') << std::setw(2) << std::hex << std::right << std::uppercase << (int)(uint8_t)pEBuffer[i] << ", ";
